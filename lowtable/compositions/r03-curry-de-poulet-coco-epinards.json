@@ -1,0 +1,10 @@
+{
+  "tagline": "Doré. Fondant. Épicé.",
+  "layers": [
+    { "id": "ing-coriandre-pluie", "title": "Coriandre", "qty": "", "note": "La pluie." },
+    { "id": "ing-base-curry-eparpille", "title": "La base", "qty": "oignon 2 · gingembre 30 g · pâte de curry 3 c. à s.", "note": "Une minute à feu vif pour réveiller la pâte." },
+    { "id": "ing-epinards-eparpille", "title": "Épinards", "qty": "400 g", "note": "Trois minutes, pas plus." },
+    { "id": "ing-poulet-cuisse-tas", "title": "Hauts de cuisse", "qty": "1,2 kg", "note": "Plus de goût que le blanc." },
+    { "id": "ing-lait-coco-nappe", "title": "Lait de coco", "qty": "800 ml", "note": "Celui qui nappe." }
+  ]
+}
