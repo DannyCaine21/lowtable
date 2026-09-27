@@ -1,0 +1,12 @@
+/* Wordmark fantôme « lowtable » — brief §3.4.2. À placer une fois, en premier enfant de <body>.
+   <div class="lt-ghost" aria-hidden="true">lowtable</div>
+   Le contenu de la page doit être en position:relative; z-index:1 (ou plus). */
+.lt-ghost{
+  position:fixed;left:-4vw;top:22vh;z-index:0;
+  font:800 40vw/1 'Inter Tight',system-ui,sans-serif;letter-spacing:-.06em;
+  color:var(--ghost, rgba(42,125,38,.07));
+  white-space:nowrap;pointer-events:none;user-select:none;
+  transform:translate3d(0,var(--lt-ghost-y,0px),0);will-change:transform;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .lt-ghost{color:var(--ghost, rgba(95,203,74,.06))}}
+@media (min-width:900px){.lt-ghost{font-size:34vw;top:18vh}}

@@ -26,7 +26,11 @@ window.Card = (() => {
     return `${plateBase}${g}<path id="cloche" d="M70 150A130 96 0 0 1 330 150" fill="none" stroke="var(--ink)" stroke-width="1" opacity="0"/>`;
   }
   // plateBase = defs + assiette ; on l'enveloppe dans pile/float/dress
-  function wrap(inner) { return inner.includes('id="pile"') ? inner : `<g id="pile"><g id="float"><g id="dress">${inner}</g></g></g>`; }
+  function wrap(inner) {
+    if (inner.includes('id="pile"')) return inner;
+    const cloche = inner.includes('id="cloche"') ? '' : '<path id="cloche" d="M70 150A130 96 0 0 1 330 150" fill="none" stroke="var(--ink)" stroke-width="1" opacity="0"/>';
+    return `<g id="pile"><g id="float"><g id="dress">${inner}${cloche}</g></g></g>`;
+  }
 
   function mount(root, o) {
     const r = o.recipe, e = o.entry || {};

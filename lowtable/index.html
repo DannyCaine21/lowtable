@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="lowtable-ghost.css">
 <style>
 /* ---------- tokens (lowtable-tokens.json v1.0.0) ---------- */
 :root{
@@ -43,7 +44,6 @@ a{color:var(--green)}
 .halo.g{width:360px;height:360px;background:var(--halo-green);left:-140px;top:18vh}
 .halo.w{width:300px;height:300px;background:var(--halo-warm);right:-120px;top:60vh;animation-delay:-9s}
 @keyframes drift{to{transform:translate(40px,-30px)}}
-.ghost{position:fixed;left:-4vw;top:24vh;font:800 40vw/1 var(--f-ui);letter-spacing:-.06em;color:var(--ghost);white-space:nowrap;pointer-events:none;z-index:0}
 /* ---------- structure ---------- */
 .page{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 20px) 20px calc(env(safe-area-inset-bottom,0px) + 110px);display:flex;flex-direction:column;gap:16px}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;flex-wrap:wrap}
@@ -190,7 +190,7 @@ form.edit textarea{min-height:96px;font:13px ui-monospace,SFMono-Regular,Menlo,m
 </head>
 <body>
 <div class="halo g" aria-hidden="true"></div><div class="halo w" aria-hidden="true"></div>
-<div class="ghost" aria-hidden="true">lowtable</div>
+<div class="lt-ghost" aria-hidden="true">lowtable</div>
 <main class="page">
   <div class="bar">
     <span class="logo">lowtable <small id="who"></small></span>
@@ -269,6 +269,8 @@ form.edit textarea{min-height:96px;font:13px ui-monospace,SFMono-Regular,Menlo,m
 
 <script src="config.js"></script>
 <script src="card.js"></script>
+<script src="lowtable-plates.js"></script>
+<script src="lowtable-ghost.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 (function(){
@@ -283,6 +285,7 @@ const RAYONS=["Boucherie","Poissonnerie","Légumes","Crèmerie","Épicerie","Aut
 const CARB_MAX=CFG.carbMax||30, HISTORY_WEEKS=CFG.historyWeeks||3;
 
 const sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseKey);
+if(window.LowtablePlates)window.LowtablePlates.base="compositions/";
 let session=null, recipes=[], plans={}, currentWeek, tab="today", openRecipe=null, ready=false, cardInst=null;
 
 // ---------- helpers
@@ -308,14 +311,30 @@ async function fetchText(u){try{const r=await fetch(u,{cache:"no-cache"});return
 async function getPlate(){if(plateBase==null)plateBase=(await fetchText("compositions/_plate.svg"))||"";return plateBase;}
 async function getComposition(r){
   if(compCache[r.id])return compCache[r.id];
-  const [svg,meta]=await Promise.all([fetchText(`compositions/${r.id}.svg`),fetchText(`compositions/${r.id}.json`)]);
-  let out;
-  if(svg){let labels=[];try{labels=(JSON.parse(meta||"{}").layers)||[];}catch(e){}out={svgInner:svg,labels};}
-  else{
+  let out=null;
+  const P=window.LowtablePlates;
+  const pid=P&&(P.resolve(r.name)||P.resolve(r.id.replace(/^r\d\d-/,"")));
+  if(pid){
+    const svg=await P.load(pid);
+    if(svg){
+      const inner=svg.replace(/^[\s\S]*?<svg[^>]*>/,"").replace(/<\/svg>\s*$/,"");
+      const meta=P.meta[pid]||{};
+      const labels=(meta.layers||[]).map(L=>({id:`${pid}-l${L.layer}`,title:L.label?.name||"",qty:(L.label?.qty)||qtyFor(r,L.label?.name),note:L.label?.note||""}));
+      out={svgInner:inner,labels,tagline:(meta.tagline||[]).join(" ")};
+    }
+  }
+  if(!out){
     const layers=fallbackLayers(r);
-    out={svgInner:window.Card.fallbackSvg(await getPlate(),layers),labels:layers.map(L=>({id:L.id,title:L.title,qty:L.qty,note:L.note}))};
+    out={svgInner:window.Card.fallbackSvg(await getPlate(),layers),labels:layers.map(L=>({id:L.id,title:L.title,qty:L.qty,note:L.note})),tagline:""};
   }
   compCache[r.id]=out;return out;
+}
+const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/œ/g,"oe").replace(/[^a-z0-9]+/g," ").trim();
+function qtyFor(r,name){
+  const n=norm(name);if(!n)return "";
+  const words=n.split(" ").filter(w=>w.length>3);
+  const hit=(r.ingredients||[]).find(i=>{const m=norm(i.name);return m.includes(n)||n.includes(m)||words.some(w=>m.includes(w));});
+  return hit?`${fmtQty(hit.qty)} ${hit.unit||""}`.trim():"";
 }
 function fallbackLayers(r){
   const order=["Épicerie","Boucherie","Poissonnerie","Légumes","Crèmerie","Autre"];
@@ -410,7 +429,7 @@ async function renderToday(){
   $("#todayNext").innerHTML=`<h3>Ensuite</h3>`+t.rest.slice(0,3).map(s=>{const e=t.p.slots[s.key];const rr=e&&byId(e.id);return rr?`<div class="row"><span>${esc(rr.name)}${e.leftoverOf?" <span class='pill'>reste</span>":""}</span><span class="k">${DAYS[s.d]} ${KIND_LABEL[s.k].toLowerCase()}</span></div>`:"";}).join("");
   const comp=await getComposition(r);
   if(token!==todayToken)return;
-  cardInst=window.Card.mount(wrap,{recipe:r,entry:t.entry,svgInner:comp.svgInner,labels:comp.labels,
+  cardInst=window.Card.mount(wrap,{recipe:(r.tagline||!comp.tagline)?r:{...r,tagline:comp.tagline},entry:t.entry,svgInner:comp.svgInner,labels:comp.labels,
     onYes:()=>markDone(t),onNo:()=>rerollToday(t)});
 }
 async function markDone(t){t.entry.status="done";await savePlan(t.p);renderToday();}
