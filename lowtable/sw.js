@@ -1,6 +1,6 @@
 // Service worker Lowtable : coquille de l'app en cache pour l'installation et le hors-ligne.
 // Les données (recettes, semaines) viennent de Supabase et ne sont pas mises en cache ici.
-const CACHE = "lowtable-v4";
+const CACHE = "lowtable-v5";
 const SHELL = ["./", "./index.html", "./config.js", "./card.js", "./lowtable-plates.js", "./lowtable-ghost.css", "./lowtable-ghost.js", "./compositions/_plate.svg", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png"];
 
 self.addEventListener("install", e => {

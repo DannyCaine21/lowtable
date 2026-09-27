@@ -59,6 +59,31 @@ h3{font:700 11px/1 var(--f-ui);letter-spacing:.16em;text-transform:uppercase;col
 .notice{background:var(--surface2);color:var(--ink);border-left:3px solid var(--warm);border-radius:var(--r-field);padding:10px 14px;font-size:14px}
 section.view{display:flex;flex-direction:column;gap:16px;animation:rise .4s var(--spring) both}
 @keyframes rise{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+/* ---------- ticker, bandeau, plateau, chargement (v1.5) ---------- */
+.ticker{margin:-6px -20px 0;padding:9px 0;background:var(--band);color:#F3F1E8;overflow:hidden;white-space:nowrap;font:700 11px/1 var(--f-ui);letter-spacing:.16em;text-transform:uppercase}
+.ticker span{display:inline-block;padding-right:2.5em;animation:tick 22s linear infinite}
+.ticker:hover span{animation-play-state:paused}
+.ticker b{color:var(--lime);font-weight:700}
+@keyframes tick{to{transform:translateX(-50%)}}
+.band-section{margin-inline:calc(50% - 50vw);padding:28px max(20px,calc(50vw - 560px)) 36px;background:var(--band);border-radius:28px 28px 0 0;color:#F3F1E8;
+  --bg:#0E120F;--surface:#171C18;--surface2:#222822;--ink:#F3F1E8;--muted:#9AA394;--line:#2C332C;--green:#5FCB4A;--green-deep:#3FA632;--on-green:#0E120F;--leftover:#1E2A1B;--warm:#F2B858;--shadow:0 2px 6px rgba(0,0,0,.3),0 18px 48px rgba(0,0,0,.45)}
+.band-section .pill{background:var(--surface2);color:var(--ink)}
+.band-section .pill.cook{background:var(--green);color:var(--on-green)}
+.band-section .pill.batch{background:var(--warm);color:#141414}
+.tray .slot{flex-direction:row;align-items:center;gap:12px;padding:10px 12px}
+.tray .slot.empty{justify-content:center}
+.slot .body{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}
+.mini{width:68px;height:40px;flex:none;opacity:0;transition:opacity .35s var(--ease)}
+.mini.on{opacity:1}
+.mini svg{width:100%;height:100%;display:block;overflow:visible}
+.slot.leftover .mini{opacity:.75}
+.tray.stagger .slot{animation:drop .45s var(--spring) both;animation-delay:calc(var(--i,0)*110ms)}
+@keyframes drop{from{transform:translateY(-18px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+.loader{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--bg);transition:opacity .35s var(--ease)}
+.loader b{font:400 clamp(72px,22vw,150px)/1 var(--f-serif);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.loader small{font:700 11px var(--f-ui);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.rcard .head{display:flex;gap:12px;align-items:center}
+.rcard .mini{width:84px;height:50px}
 /* ---------- boutons ---------- */
 .btn{min-height:44px;padding:0 20px;border-radius:var(--r-pill);font:800 13px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:2px solid var(--ink);background:transparent;color:var(--ink);transition:transform 200ms var(--spring),background-color 200ms var(--ease),border-color 200ms}
 .btn:hover{transform:translateY(-2px)}
@@ -142,7 +167,7 @@ nav.tabs button[aria-selected="true"]{color:var(--on-green);background:var(--gre
 .slot.done{opacity:.55}
 .slot.done .name{text-decoration:line-through}
 .slot.empty{color:var(--muted);border-style:dashed;justify-content:center;align-items:center}
-.slot .name{font:800 15px/1.2 var(--f-ui);letter-spacing:-.02em;padding-right:56px;cursor:pointer}
+.slot .name{font:800 15px/1.2 var(--f-ui);letter-spacing:-.02em;padding-right:52px;cursor:pointer}
 .slot .name:hover{color:var(--green)}
 .slot .meta{font:500 11px var(--f-ui);color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-variant-numeric:tabular-nums}
 .slot .tools{position:absolute;top:8px;right:8px;display:flex;gap:2px}
@@ -196,6 +221,7 @@ form.edit textarea{min-height:96px;font:13px ui-monospace,SFMono-Regular,Menlo,m
     <span class="logo">lowtable <small id="who"></small></span>
     <button class="btn small hidden" id="btnLogout">Déconnexion</button>
   </div>
+  <div class="ticker" aria-hidden="true"><span>Low carb <b>·</b> Batch du dimanche <b>·</b> Deux couverts <b>·</b> Zéro chou-fleur <b>·</b> Swipe ton dîner <b>·</b> Low carb <b>·</b> Batch du dimanche <b>·</b> Deux couverts <b>·</b> Zéro chou-fleur <b>·</b> Swipe ton dîner <b>·</b> </span></div>
   <div id="notice" class="notice hidden"></div>
 
   <section id="view-login" class="view login hidden">
@@ -216,7 +242,7 @@ form.edit textarea{min-height:96px;font:13px ui-monospace,SFMono-Regular,Menlo,m
     <div class="next" id="todayNext"></div>
   </section>
 
-  <section id="view-semaine" class="view hidden">
+  <section id="view-semaine" class="view band-section hidden">
     <div class="bar">
       <div class="week-nav">
         <button class="btn small" id="prevWeek" aria-label="Semaine précédente">←</button>
@@ -227,12 +253,12 @@ form.edit textarea{min-height:96px;font:13px ui-monospace,SFMono-Regular,Menlo,m
       <button class="btn small" id="btnShuffle">Nouveau tirage</button>
       <button class="btn small primary" id="btnShuffleKeep" title="Garde les repas verrouillés, retire le reste">Retirer sauf verrouillés</button>
     </div>
-    <div class="grid" id="grid"></div>
+    <div class="grid tray" id="grid"></div>
     <div class="summary" id="weekSummary"></div>
     <p class="hint">Le dimanche est le jour batch. Un dîner à 2 ou 3 repas nourrit les déjeuners suivants (cases en pointillé). Cadenas = figé pour le prochain tirage ; ↻ = remplacer ce repas seul.</p>
   </section>
 
-  <section id="view-courses" class="view hidden">
+  <section id="view-courses" class="view band-section hidden">
     <div class="bar">
       <h2 class="manif" id="coursesTitle">Courses</h2>
       <div class="grow"></div>
@@ -264,6 +290,7 @@ form.edit textarea{min-height:96px;font:13px ui-monospace,SFMono-Regular,Menlo,m
   <button role="tab" data-tab="courses" aria-selected="false">Courses</button>
   <button role="tab" data-tab="recettes" aria-selected="false">Recettes</button>
 </nav>
+<div class="loader hidden" id="loader" aria-hidden="true"><b id="loaderN">0</b><small>recettes</small></div>
 <div id="fx" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -286,7 +313,7 @@ const CARB_MAX=CFG.carbMax||30, HISTORY_WEEKS=CFG.historyWeeks||3;
 
 const sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseKey);
 if(window.LowtablePlates)window.LowtablePlates.base="compositions/";
-let session=null, recipes=[], plans={}, currentWeek, tab="today", openRecipe=null, ready=false, cardInst=null;
+let session=null, recipes=[], plans={}, currentWeek, tab="today", openRecipe=null, ready=false, cardInst=null, justShuffled=false;
 
 // ---------- helpers
 let toastTimer;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("on"),2200);}
@@ -345,6 +372,26 @@ function fallbackLayers(r){
   return layers;
 }
 
+// ---------- vignettes (mini-piles 40 px, couches "mini" du registre)
+const miniCache={};
+async function miniSvg(r){
+  if(miniCache[r.id]!==undefined)return miniCache[r.id];
+  const P=window.LowtablePlates;let out=null;
+  const pid=P&&(P.resolve(r.name)||P.resolve(r.id.replace(/^r\d\d-/,"")));
+  if(pid){const svg=await P.load(pid);if(svg){
+    const keep=new Set(((P.meta[pid]||{}).mini||[0,1,2]).map(String));
+    const doc=new DOMParser().parseFromString(svg,"image/svg+xml");const root=doc.documentElement;
+    [...root.children].forEach(el=>{if(el.hasAttribute("data-layer")){if(!keep.has(el.getAttribute("data-layer")))el.remove();else el.removeAttribute("id");}});
+    root.setAttribute("viewBox","55 126 290 112");root.removeAttribute("width");root.removeAttribute("height");root.removeAttribute("role");root.setAttribute("aria-hidden","true");
+    out=root.outerHTML;}}
+  miniCache[r.id]=out;return out;
+}
+function fillMinis(scope){
+  scope.querySelectorAll(".mini[data-mini]").forEach(async el=>{const r=byId(el.dataset.mini);if(!r)return;const s=await miniSvg(r);if(s&&el.isConnected){el.innerHTML=s;el.classList.add("on");}else el.remove();});
+}
+function countUp(scope){
+  scope.querySelectorAll("[data-to]").forEach(el=>{const to=+el.dataset.to;if(matchMedia("(prefers-reduced-motion: reduce)").matches)return el.textContent=to;const t0=performance.now();const step=now=>{const x=Math.min(1,(now-t0)/400);el.textContent=Math.round(to*(1-Math.pow(1-x,3)));if(x<1)requestAnimationFrame(step);};requestAnimationFrame(step);});
+}
 // ---------- shuffle
 function recentIds(week){const ids=new Set();for(let i=1;i<=HISTORY_WEEKS;i++){const p=plans[shiftWeek(week,-i)];if(p&&p.slots)Object.values(p.slots).forEach(s=>s&&!s.leftoverOf&&ids.add(s.id));}return ids;}
 function shuffle(prev){
@@ -394,7 +441,7 @@ async function loadAll(){
   if(e1||e2){const e=e1||e2;if(/row-level|permission|policy/i.test(e.message)||e.code==="42501"){showNotice("Ton email n'est pas dans le foyer autorisé. Ajoute-le dans la table household_members (Supabase) puis reconnecte-toi.");}else toast("Chargement : "+e.message);return;}
   recipes=r||[];plans={};(p||[]).forEach(x=>plans[x.week]=x);
   if(!recipes.length)showNotice("Aucune recette : exécute supabase/schema.sql dans Supabase.");
-  ready=true;render();
+  ready=true;render();hideLoader();
 }
 function showNotice(m){const n=$("#notice");n.textContent=m;n.classList.remove("hidden");}
 let rt=null;
@@ -460,17 +507,20 @@ function renderWeek(){
       dc+=r.carbs||0;dp+=r.prot||0;totals.kcal+=r.kcal||0;if(!s.leftoverOf)totals.cook++;
       const lock=p.locked&&p.locked[key];
       const src=s.leftoverOf?`<span class="pill">reste · ${DAYS[+s.leftoverOf.split("-")[0]]} ${KIND_LABEL[s.leftoverOf.split("-")[1]].toLowerCase()}</span>`:(r.meals>=3?`<span class="pill batch">grand batch · ${r.meals} repas</span>`:(r.meals===2?`<span class="pill cook">à cuisiner · 2 repas</span>`:`<span class="pill cook">à cuisiner</span>`));
-      row+=`<div class="slot ${s.leftoverOf?"leftover":""} ${lock?"locked":""} ${s.status==="done"?"done":""}" data-kind="${KIND_LABEL[k]}">
-        <div class="name" data-open="${r.id}">${esc(r.name)}</div>
-        <div class="meta">${src}<span>${r.time_min} min</span><span>${r.carbs} g gluc.</span><span>${r.prot} g prot.</span></div>
+      row+=`<div class="slot ${s.leftoverOf?"leftover":""} ${lock?"locked":""} ${s.status==="done"?"done":""}" data-kind="${KIND_LABEL[k]}" style="--i:${d*2+(k==="dinner"?1:0)}">
+        <div class="mini" data-mini="${r.id}"></div>
+        <div class="body"><div class="name" data-open="${r.id}">${esc(r.name)}</div>
+        <div class="meta">${src}<span>${r.time_min} min</span><span>${r.carbs} g gluc.</span></div></div>
         <div class="tools"><button class="icon" data-lock="${key}" title="${lock?"Déverrouiller":"Verrouiller"}">${lock?"🔒":"🔓"}</button><button class="icon" data-swap="${key}" title="Remplacer ce repas">↻</button></div>
       </div>`;
     }
     totals.carbs+=dc;totals.prot+=dp;
     h+=`<div class="day"><span class="d">${DAYS_LONG[d]}</span><span class="macro">${dc} g gluc. · ${dp} g prot.</span></div>${row}`;
   }
-  g.innerHTML=h;
-  $("#weekSummary").innerHTML=p?`<div><b>${totals.cook}</b><small>Recettes à cuisiner</small></div><div><b>${Math.round(totals.carbs/7)}</b><small>g gluc. / jour / pers.</small></div><div><b>${Math.round(totals.prot/7)}</b><small>g prot. / jour / pers.</small></div><div><b>${Math.round(totals.kcal/7)}</b><small>kcal / jour / pers.</small></div>`:`<div style="grid-column:1/-1;border:0;padding-left:0"><small>Aucun plan pour cette semaine. Lance un tirage.</small></div>`;
+  g.classList.toggle("stagger",justShuffled);justShuffled=false;
+  g.innerHTML=h;fillMinis(g);
+  $("#weekSummary").innerHTML=p?`<div><b data-to="${totals.cook}">0</b><small>Recettes à cuisiner</small></div><div><b data-to="${Math.round(totals.carbs/7)}">0</b><small>g gluc. / jour / pers.</small></div><div><b data-to="${Math.round(totals.prot/7)}">0</b><small>g prot. / jour / pers.</small></div><div><b data-to="${Math.round(totals.kcal/7)}">0</b><small>kcal / jour / pers.</small></div>`:`<div style="grid-column:1/-1;border:0;padding-left:0"><small>Aucun plan pour cette semaine. Lance un tirage.</small></div>`;
+  countUp($("#weekSummary"));
   g.querySelectorAll("[data-open]").forEach(el=>el.onclick=()=>{openRecipe=el.dataset.open;switchTab("recettes");});
   g.querySelectorAll("[data-lock]").forEach(el=>el.onclick=()=>toggleLock(el.dataset.lock));
   g.querySelectorAll("[data-swap]").forEach(el=>el.onclick=()=>swapSlot(el.dataset.swap));
@@ -480,7 +530,7 @@ async function doShuffle(keepLocks){
   const p=shuffle(keepLocks?prev:null);
   if(!p)return toast("Il faut au moins 6 recettes actives");
   if(!keepLocks)p.locked={};
-  plans[currentWeek]=p;render();await savePlan(p);toast("Semaine tirée");
+  plans[currentWeek]=p;justShuffled=true;render();await savePlan(p);toast("Semaine tirée");
 }
 async function toggleLock(key){const p=plans[currentWeek];if(!p)return;p.locked=p.locked||{};const s=p.slots&&p.slots[key];if(s&&s.leftoverOf)key=s.leftoverOf;if(p.locked[key])delete p.locked[key];else p.locked[key]=true;renderWeek();await savePlan(p);}
 async function swapSlot(key){
@@ -530,12 +580,13 @@ function renderRecettes(){
   if(kind==="large")list=list.filter(r=>(r.meals||1)>=3);if(kind==="mid")list=list.filter(r=>r.meals===2);if(kind==="single")list=list.filter(r=>(r.meals||1)===1);if(kind==="lunch")list=list.filter(r=>(r.time_min||0)<=20&&(r.meals||1)===1);
   list.sort((a,b)=>a.name.localeCompare(b.name,"fr"));
   $("#rlist").innerHTML=list.map(r=>{const open=openRecipe===r.id;return `<div class="rcard ${r.active===false?"off":""}" id="rc-${r.id}">
-    <div class="t"><span data-open="${r.id}" style="cursor:pointer">${esc(r.name)}</span><span><button class="icon" data-edit="${r.id}" title="Modifier">✎</button></span></div>
-    ${r.tagline?`<div class="tl">${esc(r.tagline)}</div>`:""}
+    <div class="head"><div class="mini" data-mini="${r.id}"></div><div style="min-width:0;flex:1"><div class="t"><span data-open="${r.id}" style="cursor:pointer">${esc(r.name)}</span><span><button class="icon" data-edit="${r.id}" title="Modifier">✎</button></span></div>
+    ${r.tagline?`<div class="tl">${esc(r.tagline)}</div>`:""}</div></div>
     <div class="meta"><span>${PROTEIN_LABEL[r.protein]||esc(r.protein)}</span><span>${r.time_min} min</span><span>${r.meals||1} repas</span><span>${r.carbs} g gluc.</span><span>${r.prot} g prot.</span><span>${r.kcal} kcal</span></div>
     <div class="tags">${(r.tags||[]).map(t=>`<span class="pill">${esc(t)}</span>`).join("")}${r.active===false?`<span class="pill">désactivée</span>`:""}</div>
     ${open?`<div class="detail"><b>Ingrédients (${r.meals||1} repas pour 2)</b><ul>${(r.ingredients||[]).map(i=>`<li>${esc(i.name)} · ${fmtQty(i.qty)} ${esc(i.unit||"")}</li>`).join("")}</ul><b style="display:block;margin-top:8px">Étapes</b><ol>${(r.steps||[]).map(s=>`<li>${esc(s)}</li>`).join("")}</ol></div>`:""}
   </div>`;}).join("")||`<p class="hint">Aucune recette.</p>`;
+  fillMinis($("#rlist"));
   $("#rlist").querySelectorAll("[data-open]").forEach(el=>el.onclick=()=>{openRecipe=openRecipe===el.dataset.open?null:el.dataset.open;renderRecettes();});
   $("#rlist").querySelectorAll("[data-edit]").forEach(el=>el.onclick=()=>openEditor(byId(el.dataset.edit)));
   if(openRecipe){const el=document.getElementById("rc-"+openRecipe);if(el&&el.scrollIntoView)el.scrollIntoView({block:"nearest"});}
@@ -598,10 +649,13 @@ function onSession(s){
   show("view-login",!s);show("tabs",!!s);$("#btnLogout").classList.toggle("hidden",!s);
   if(!s){["today","semaine","courses","recettes"].forEach(v=>show("view-"+v,false));booted=false;return;}
   $("#who").textContent=s.user.email;
-  if(booted)return;booted=true;
+  if(booted)return;booted=true;showLoader();
   try{const t=localStorage.getItem("lt-tab");if(t)tab=t;}catch(e){}
   switchTab(tab);loadAll();subscribeRealtime();
 }
+let loaderT0=0;
+function showLoader(){const l=$("#loader");l.classList.remove("hidden");l.style.opacity="1";loaderT0=performance.now();const n=$("#loaderN");if(matchMedia("(prefers-reduced-motion: reduce)").matches){n.textContent="30";return;}const step=now=>{const x=Math.min(1,(now-loaderT0)/900);n.textContent=Math.round((recipes.length||30)*(1-Math.pow(1-x,3)));if(x<1&&!l.classList.contains("hidden"))requestAnimationFrame(step);};requestAnimationFrame(step);}
+function hideLoader(){const l=$("#loader");if(l.classList.contains("hidden"))return;const wait=Math.max(0,900-(performance.now()-loaderT0));setTimeout(()=>{$("#loaderN").textContent=recipes.length||30;l.style.opacity="0";setTimeout(()=>l.classList.add("hidden"),380);},wait);}
 sb.auth.getSession().then(({data})=>onSession(data.session));
 sb.auth.onAuthStateChange((ev,s)=>{if(ev==="SIGNED_IN"||ev==="SIGNED_OUT"||ev==="TOKEN_REFRESHED")onSession(s);});
 
