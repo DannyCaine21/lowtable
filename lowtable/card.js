@@ -35,7 +35,7 @@ window.Card = (() => {
   function mount(root, o) {
     const r = o.recipe, e = o.entry || {};
     const tag = (r.tagline || '').split(/\s+/).filter(Boolean);
-    const src = e.leftoverOf ? 'Reste d\'hier · rien à cuisiner' : (r.meals > 1 ? `À cuisiner · ${r.meals} repas pour 2` : 'À cuisiner');
+    const src = r.meal_type === 'breakfast' ? `Petit-déj · ${r.time_min || 5} min` : e.leftoverOf ? 'Reste d\'hier · rien à cuisiner' : (r.meals > 1 ? `À cuisiner · ${r.meals} repas pour 2` : 'À cuisiner');
     const labels = o.labels || [];
     root.innerHTML = `<article class="card" aria-label="Repas du jour">
       <div class="stamp yes" aria-hidden="true">MIAM</div><div class="stamp no" aria-hidden="true">NOPE</div>

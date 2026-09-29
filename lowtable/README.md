@@ -23,3 +23,16 @@ La semaine commence le dimanche (jour batch). Deux dîners « grand batch » (3 
 1. Supabase → SQL Editor : coller `supabase/schema.sql` (remplacer les deux emails du foyer) → Run.
 2. Supabase → Authentication → URL Configuration : Site URL = l'URL GitHub Pages de l'app ; l'ajouter aussi aux Redirect URLs.
 3. Ouvrir l'app, entrer son email, cliquer le lien reçu. Sur téléphone : « Ajouter à l'écran d'accueil ».
+
+## v1.6 — Étape 1 : contenu
+- Petit-déjeuner : troisième créneau du tirage (7 recettes, jamais la même deux jours de suite), colonne dans le plateau, ingrédients dans la liste de courses.
+- +10 plats et +7 petits-déj, low carb strict (≤ 30 g / portion), dont 16 avec pile dessinée par le générateur du lot 2 (`tools/new_recipes.py`).
+- Tirage : la capacité en restes n'est plus jamais relâchée (plus aucune portion jetée, batch du mercredi garanti). Test : `node tools/test_shuffle.js` (300 semaines).
+- Limite connue : la rotation de 3 semaines est relâchée ~2 fois par semaine, uniquement sur les recettes à 1 repas (11 au catalogue) — en ajouter.
+
+## v1.7 — Ergonomie, première passe
+- Courses : noms et unités fusionnés (kg/g, l/ml, tête/gousse, pluriels), avancement « n / N dans le panier », ligne entière tactile, articles cochés en bas de rayon.
+- Semaine : s'ouvre sur la semaine en cours, défile jusqu'à aujourd'hui, jour courant repéré ; icônes SVG (verrou, échange, édition).
+- Chrome : barre du bas avec icônes, ticker seulement sur Aujourd'hui, compte et déconnexion derrière l'icône de profil.
+- Étiquettes d'anatomie : correspondance des quantités plus stricte.
+- Maquette des futurs écrans Aujourd'hui et Cuisiner : `maquette/aujourdhui.html`.

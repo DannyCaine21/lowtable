@@ -84,6 +84,18 @@ section.view{display:flex;flex-direction:column;gap:16px;animation:rise .4s var(
 .loader small{font:700 11px var(--f-ui);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .rcard .head{display:flex;gap:12px;align-items:center}
 .rcard .mini{width:84px;height:50px}
+.acct{position:relative}
+.menu{position:absolute;right:0;top:48px;z-index:6;min-width:220px;display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.menu small{font:500 12px var(--f-ui);color:var(--muted);word-break:break-all}
+.ticker.off{display:none}
+.courses-top{display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
+.progress{height:6px;border-radius:3px;background:var(--surface2);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--green);border-radius:3px;transition:width .35s var(--ease)}
+.courses-count{font:700 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.courses-count b{color:var(--ink);font-size:15px;letter-spacing:0}
+.day.today .d{color:var(--green)}
+.day.today .d::after{content:" · aujourd'hui";font:700 10px var(--f-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--green)}
+.icon svg{display:block}
 /* ---------- boutons ---------- */
 .btn{min-height:44px;padding:0 20px;border-radius:var(--r-pill);font:800 13px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:2px solid var(--ink);background:transparent;color:var(--ink);transition:transform 200ms var(--spring),background-color 200ms var(--ease),border-color 200ms}
 .btn:hover{transform:translateY(-2px)}
@@ -99,7 +111,7 @@ section.view{display:flex;flex-direction:column;gap:16px;animation:rise .4s var(
 .pill.cook{background:var(--green);color:var(--on-green)}
 /* ---------- nav ---------- */
 nav.tabs{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));width:min(480px,calc(100% - 32px));display:flex;gap:4px;background:color-mix(in srgb,var(--surface) 84%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:var(--r-pill);padding:6px;z-index:5;box-shadow:var(--shadow)}
-nav.tabs button{flex:1;border:0;background:transparent;color:var(--muted);font:700 11px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;padding:10px 4px;border-radius:var(--r-pill);cursor:pointer;transition:background .25s var(--ease),color .25s,transform .25s var(--spring)}
+nav.tabs button{flex:1;border:0;background:transparent;color:var(--muted);font:700 10px var(--f-ui);letter-spacing:.04em;padding:7px 2px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:var(--r-pill);cursor:pointer;transition:background .25s var(--ease),color .25s,transform .25s var(--spring)}
 nav.tabs button[aria-selected="true"]{color:var(--on-green);background:var(--green);transform:translateY(-2px)}
 /* ---------- connexion ---------- */
 .login{max-width:420px;display:flex;flex-direction:column;gap:14px;padding-top:8vh}
@@ -155,7 +167,7 @@ nav.tabs button[aria-selected="true"]{color:var(--on-green);background:var(--gre
 /* ---------- semaine ---------- */
 .week-nav{display:flex;align-items:center;gap:8px}
 .week-nav .label{font:700 12px/1 var(--f-ui);letter-spacing:.1em;text-transform:uppercase;min-width:170px;text-align:center;font-variant-numeric:tabular-nums}
-.grid{display:grid;grid-template-columns:110px 1fr 1fr;gap:8px;align-items:stretch}
+.grid{display:grid;grid-template-columns:110px 1fr 1fr 1fr;gap:8px;align-items:stretch}
 .grid .hd{font:700 11px var(--f-ui);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:4px 8px}
 .day{padding:10px 8px;display:flex;flex-direction:column;gap:2px}
 .day .d{font:400 22px/1 var(--f-serif)}
@@ -180,7 +192,8 @@ nav.tabs button[aria-selected="true"]{color:var(--on-green);background:var(--gre
 .card-plain{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);padding:16px 20px}
 .rayon h3{color:var(--green);margin-top:18px}
 .rayon ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px 20px}
-.rayon li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dotted var(--line);font-weight:700;transition:opacity .2s}
+.rayon li{border-bottom:1px dotted var(--line);font-weight:700;transition:opacity .2s}
+.rayon li label{display:flex;align-items:center;gap:12px;min-height:48px;padding:6px 0;cursor:pointer}
 .rayon li.done{color:var(--muted);text-decoration:line-through;opacity:.6}
 .rayon input[type=checkbox]{width:22px;height:22px;accent-color:var(--green);margin:0;flex:none}
 .rayon .q{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap;font-weight:500}
@@ -218,8 +231,9 @@ form.edit textarea{min-height:96px;font:13px ui-monospace,SFMono-Regular,Menlo,m
 <div class="lt-ghost" aria-hidden="true">lowtable</div>
 <main class="page">
   <div class="bar">
-    <span class="logo">lowtable <small id="who"></small></span>
-    <button class="btn small hidden" id="btnLogout">Déconnexion</button>
+    <span class="logo">lowtable</span>
+    <div class="acct"><button class="icon hidden" id="btnMenu" aria-label="Compte" aria-expanded="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.2-3.6 3.8-5.5 7-5.5s5.8 1.9 7 5.5"/></svg></button>
+      <div class="menu hidden" id="menu"><small id="who"></small><button class="btn small" id="btnLogout">Déconnexion</button></div></div>
   </div>
   <div class="ticker" aria-hidden="true"><span>Low carb <b>·</b> Batch du dimanche <b>·</b> Deux couverts <b>·</b> Zéro chou-fleur <b>·</b> Swipe ton dîner <b>·</b> Low carb <b>·</b> Batch du dimanche <b>·</b> Deux couverts <b>·</b> Zéro chou-fleur <b>·</b> Swipe ton dîner <b>·</b> </span></div>
   <div id="notice" class="notice hidden"></div>
@@ -255,7 +269,7 @@ form.edit textarea{min-height:96px;font:13px ui-monospace,SFMono-Regular,Menlo,m
     </div>
     <div class="grid tray" id="grid"></div>
     <div class="summary" id="weekSummary"></div>
-    <p class="hint">Le dimanche est le jour batch. Un dîner à 2 ou 3 repas nourrit les déjeuners suivants (cases en pointillé). Cadenas = figé pour le prochain tirage ; ↻ = remplacer ce repas seul.</p>
+    <p class="hint">Le dimanche est le jour batch. Un dîner à 2 ou 3 repas nourrit les déjeuners suivants (cases en pointillé). Cadenas : figé pour le prochain tirage. Flèches : remplacer ce repas seul.</p>
   </section>
 
   <section id="view-courses" class="view band-section hidden">
@@ -273,7 +287,7 @@ form.edit textarea{min-height:96px;font:13px ui-monospace,SFMono-Regular,Menlo,m
       <div class="filters">
         <input type="text" id="fSearch" placeholder="Chercher…" style="width:160px">
         <select id="fProtein"><option value="">Toutes protéines</option></select>
-        <select id="fKind"><option value="">Tous types</option><option value="large">Grand batch (3 repas)</option><option value="mid">2 repas</option><option value="single">1 repas</option><option value="lunch">Lunch rapide</option></select>
+        <select id="fKind"><option value="">Tous types</option><option value="large">Grand batch (3 repas)</option><option value="mid">2 repas</option><option value="single">1 repas</option><option value="lunch">Lunch rapide</option><option value="breakfast">Petits-déj</option></select>
         <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)"><input type="checkbox" id="fInactive"> désactivées</label>
       </div>
       <div class="grow"></div>
@@ -285,10 +299,10 @@ form.edit textarea{min-height:96px;font:13px ui-monospace,SFMono-Regular,Menlo,m
 </main>
 
 <nav class="tabs hidden" id="tabs" role="tablist">
-  <button role="tab" data-tab="today" aria-selected="true">Aujourd'hui</button>
-  <button role="tab" data-tab="semaine" aria-selected="false">Semaine</button>
-  <button role="tab" data-tab="courses" aria-selected="false">Courses</button>
-  <button role="tab" data-tab="recettes" aria-selected="false">Recettes</button>
+  <button role="tab" data-tab="today" aria-selected="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="13" rx="9" ry="6"/><ellipse cx="12" cy="13" rx="5" ry="3"/></svg><span>Aujourd'hui</span></button>
+  <button role="tab" data-tab="semaine" aria-selected="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Semaine</span></button>
+  <button role="tab" data-tab="courses" aria-selected="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9h16l-1.6 9.2a2 2 0 0 1-2 1.8H7.6a2 2 0 0 1-2-1.8z"/><path d="M8.5 9l3.5-5 3.5 5"/></svg><span>Courses</span></button>
+  <button role="tab" data-tab="recettes" aria-selected="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 4.5h10a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10"/></svg><span>Recettes</span></button>
 </nav>
 <div class="loader hidden" id="loader" aria-hidden="true"><b id="loaderN">0</b><small>recettes</small></div>
 <div id="fx" aria-hidden="true"></div>
@@ -306,7 +320,8 @@ const CFG=window.LOWTABLE_CONFIG;
 const $=s=>document.querySelector(s);
 const DAYS=["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
 const DAYS_LONG=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
-const KINDS=["lunch","dinner"]; const KIND_LABEL={lunch:"Déjeuner",dinner:"Dîner"};
+const KINDS=["breakfast","lunch","dinner"]; const KIND_LABEL={breakfast:"Petit-déj",lunch:"Déjeuner",dinner:"Dîner"};
+const isBf=r=>r&&r.meal_type==="breakfast";
 const PROTEIN_LABEL={poulet:"Poulet",dinde:"Dinde",boeuf:"Bœuf",porc:"Porc",poisson:"Poisson",oeufs:"Œufs",vege:"Végé",agneau:"Agneau"};
 const RAYONS=["Boucherie","Poissonnerie","Légumes","Crèmerie","Épicerie","Autre"];
 const CARB_MAX=CFG.carbMax||30, HISTORY_WEEKS=CFG.historyWeeks||3;
@@ -359,8 +374,9 @@ async function getComposition(r){
 const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/œ/g,"oe").replace(/[^a-z0-9]+/g," ").trim();
 function qtyFor(r,name){
   const n=norm(name);if(!n)return "";
-  const words=n.split(" ").filter(w=>w.length>3);
-  const hit=(r.ingredients||[]).find(i=>{const m=norm(i.name);return m.includes(n)||n.includes(m)||words.some(w=>m.includes(w));});
+  const STOP=new Set(["avec","dans","pour","sauce","base"]);
+  const words=n.split(" ").filter(w=>w.length>=4&&!STOP.has(w));
+  const hit=(r.ingredients||[]).find(i=>{const m=norm(i.name);return m===n||words.some(w=>m.includes(w.slice(0,5)));});
   return hit?`${fmtQty(hit.qty)} ${hit.unit||""}`.trim():"";
 }
 function fallbackLayers(r){
@@ -395,29 +411,40 @@ function countUp(scope){
 // ---------- shuffle
 function recentIds(week){const ids=new Set();for(let i=1;i<=HISTORY_WEEKS;i++){const p=plans[shiftWeek(week,-i)];if(p&&p.slots)Object.values(p.slots).forEach(s=>s&&!s.leftoverOf&&ids.add(s.id));}return ids;}
 function shuffle(prev){
-  const active=recipes.filter(r=>r.active!==false&&(r.carbs??0)<=CARB_MAX);
+  const active=recipes.filter(r=>r.active!==false&&!isBf(r)&&(r.carbs??0)<=CARB_MAX);
+  const bfPool=recipes.filter(r=>r.active!==false&&isBf(r)&&(r.carbs??0)<=CARB_MAX);
   if(active.length<6)return null;
+  const bfUsed=[];
   const recent=recentIds(currentWeek);
   const slots={}; const locked=(prev&&prev.locked)||{};
   const cooked=new Set(); const queue=[]; const dinnerProteins=[];
   const plan=seqSlots();
   for(const s of plan){const ps=prev&&prev.slots&&prev.slots[s.key];if(locked[s.key]&&ps&&!ps.leftoverOf){slots[s.key]={id:ps.id};cooked.add(ps.id);}}
   for(const s of plan){
-    if(slots[s.key]){const ps=slots[s.key];const r=byId(ps.id);if(r)for(let i=1;i<(r.meals||1);i++)queue.push({id:r.id,leftoverOf:s.key});if(s.k==="dinner")dinnerProteins.push(r&&r.protein);continue;}
+    if(slots[s.key]){const ps=slots[s.key];const r=byId(ps.id);if(s.k==="breakfast"){bfUsed.push(ps.id);continue;}if(r)for(let i=1;i<(r.meals||1);i++)queue.push({id:r.id,leftoverOf:s.key});if(s.k==="dinner")dinnerProteins.push(r&&r.protein);continue;}
+    if(s.k==="breakfast"){
+      if(!bfPool.length)continue;
+      let p=bfPool.filter(r=>!bfUsed.includes(r.id));if(!p.length)p=bfPool.filter(r=>r.id!==bfUsed[bfUsed.length-1]);if(!p.length)p=bfPool;
+      const b=rnd(p);slots[s.key]={id:b.id};bfUsed.push(b.id);continue;
+    }
     if(s.k==="lunch"&&queue.length){slots[s.key]=queue.shift();continue;}
-    const remainingLunches=plan.filter(x=>x.k==="lunch"&&x.d>s.d).length;
+    // capacité en restes : déjeuners encore libres après ce créneau, moins ceux réservés au batch du mercredi
+    const lunchesAfter=plan.filter(x=>x.k==="lunch"&&x.d>s.d).length;
+    const isWedBatch=s.k==="dinner"&&s.d===3;
+    const reserve=(!isWedBatch&&(s.d<3||(s.d===3&&s.k==="lunch")))?2:0;
+    const cap=Math.max(0,lunchesAfter-queue.length-reserve);
+    const fits=r=>(r.meals||1)-1<=cap;
     const needLarge=s.k==="dinner"&&(s.d===0||s.d===3);
     const lastProt=dinnerProteins.slice(-2);
     const pool=active.filter(r=>!cooked.has(r.id));
+    const slotOk=s.k==="lunch"?(r=>(r.meals||1)<=2&&(r.time_min||0)<=25):(r=>true);
+    // relâchement dans l'ordre : rotation 3 semaines, puis protéine ; jamais la capacité (pas de restes jetés)
+    const tiers=s.k==="dinner"?[r=>!recent.has(r.id)&&!lastProt.includes(r.protein),r=>!lastProt.includes(r.protein),r=>true]:[r=>!recent.has(r.id),r=>true];
     let pick=null;
-    for(const tier of [r=>!recent.has(r.id),r=>true]){
-      let p=pool.filter(tier);
-      if(s.k==="lunch"){const q=p.filter(r=>(r.meals||1)<=2&&(r.time_min||0)<=25);p=q.length?q:p.filter(r=>(r.meals||1)<=2);}
-      else{
-        p=p.filter(r=>!lastProt.includes(r.protein));
-        if(needLarge){const l=p.filter(r=>(r.meals||1)>=3);if(l.length)p=l;}
-        else{const maxMeals=Math.max(1,Math.min(3,remainingLunches-queue.length+1));const q=p.filter(r=>(r.meals||1)<=maxMeals);if(q.length)p=q;}
-      }
+    if(needLarge)for(const tier of tiers){const p=pool.filter(r=>tier(r)&&fits(r)&&(r.meals||1)>=3);if(p.length){pick=rnd(p);break;}}
+    if(!pick)for(const tier of tiers){
+      let p=pool.filter(r=>tier(r)&&fits(r));
+      const q=p.filter(slotOk);if(q.length)p=q;
       if(p.length){pick=rnd(p);break;}
     }
     if(!pick)pick=rnd(pool.length?pool:active);
@@ -456,7 +483,7 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 
 // ---------- aujourd'hui
 function todaySlot(){
-  const d=new Date();const day=d.getDay();const kind=d.getHours()<14?"lunch":"dinner";
+  const d=new Date();const day=d.getDay();const kind=d.getHours()<10?"breakfast":(d.getHours()<14?"lunch":"dinner");
   const p=plans[currentWeekKey()];if(!p||!p.slots)return {p:null};
   const order=seqSlots();let idx=order.findIndex(s=>s.d===day&&s.k===kind);if(idx<0)idx=0;
   for(let i=idx;i<order.length;i++){const s=order[i];const e=p.slots[s.key];if(e&&e.status!=="done")return {p,slot:s,entry:e,rest:order.slice(i+1)};}
@@ -483,8 +510,10 @@ async function markDone(t){t.entry.status="done";await savePlan(t.p);renderToday
 async function rerollToday(t){
   const p=t.p;const key=t.slot.key;const cur=p.slots[key];
   const used=new Set(Object.values(p.slots).map(s=>s.id));
-  let pool=recipes.filter(r=>r.active!==false&&!used.has(r.id)&&(r.carbs??0)<=CARB_MAX);
-  if(cur.leftoverOf)pool=pool.filter(r=>(r.meals||1)===1&&(r.time_min||0)<=25);
+  const bf=key.endsWith("-breakfast");
+  let pool=recipes.filter(r=>r.active!==false&&isBf(r)===bf&&(bf?r.id!==cur.id:!used.has(r.id))&&(r.carbs??0)<=CARB_MAX);
+  if(bf){}
+  else if(cur.leftoverOf)pool=pool.filter(r=>(r.meals||1)===1&&(r.time_min||0)<=25);
   else{const m=byId(cur.id)?.meals||1;const q=pool.filter(r=>(r.meals||1)===m);pool=q.length?q:pool.filter(r=>(r.meals||1)<=m);}
   if(!pool.length){toast("Rien d'autre de compatible — ajoute des recettes");return renderToday();}
   const pick=rnd(pool);
@@ -497,25 +526,26 @@ async function rerollToday(t){
 // ---------- semaine
 function renderWeek(){
   $("#weekLabel").textContent=weekLabel(currentWeek);
-  const p=plans[currentWeek]; const g=$("#grid"); let h=`<div class="hd"></div><div class="hd">Déjeuner</div><div class="hd">Dîner</div>`;
+  const p=plans[currentWeek]; const g=$("#grid"); let h=`<div class="hd"></div><div class="hd">Petit-déj</div><div class="hd">Déjeuner</div><div class="hd">Dîner</div>`;
   const totals={carbs:0,prot:0,kcal:0,cook:0};
   for(let d=0;d<7;d++){
     let dc=0,dp=0,row="";
     for(const k of KINDS){
       const key=slotKey(d,k); const s=p&&p.slots&&p.slots[key]; const r=s&&byId(s.id);
       if(!r){row+=`<div class="slot empty" data-kind="${KIND_LABEL[k]}">—</div>`;continue;}
-      dc+=r.carbs||0;dp+=r.prot||0;totals.kcal+=r.kcal||0;if(!s.leftoverOf)totals.cook++;
+      dc+=r.carbs||0;dp+=r.prot||0;totals.kcal+=r.kcal||0;if(!s.leftoverOf&&k!=="breakfast")totals.cook++;
       const lock=p.locked&&p.locked[key];
-      const src=s.leftoverOf?`<span class="pill">reste · ${DAYS[+s.leftoverOf.split("-")[0]]} ${KIND_LABEL[s.leftoverOf.split("-")[1]].toLowerCase()}</span>`:(r.meals>=3?`<span class="pill batch">grand batch · ${r.meals} repas</span>`:(r.meals===2?`<span class="pill cook">à cuisiner · 2 repas</span>`:`<span class="pill cook">à cuisiner</span>`));
-      row+=`<div class="slot ${s.leftoverOf?"leftover":""} ${lock?"locked":""} ${s.status==="done"?"done":""}" data-kind="${KIND_LABEL[k]}" style="--i:${d*2+(k==="dinner"?1:0)}">
+      const src=k==="breakfast"?`<span class="pill">petit-déj</span>`:s.leftoverOf?`<span class="pill">reste · ${DAYS[+s.leftoverOf.split("-")[0]]} ${KIND_LABEL[s.leftoverOf.split("-")[1]].toLowerCase()}</span>`:(r.meals>=3?`<span class="pill batch">grand batch · ${r.meals} repas</span>`:(r.meals===2?`<span class="pill cook">à cuisiner · 2 repas</span>`:`<span class="pill cook">à cuisiner</span>`));
+      row+=`<div class="slot ${s.leftoverOf?"leftover":""} ${lock?"locked":""} ${s.status==="done"?"done":""}" data-kind="${KIND_LABEL[k]}" style="--i:${d*3+KINDS.indexOf(k)}">
         <div class="mini" data-mini="${r.id}"></div>
         <div class="body"><div class="name" data-open="${r.id}">${esc(r.name)}</div>
         <div class="meta">${src}<span>${r.time_min} min</span><span>${r.carbs} g gluc.</span></div></div>
-        <div class="tools"><button class="icon" data-lock="${key}" title="${lock?"Déverrouiller":"Verrouiller"}">${lock?"🔒":"🔓"}</button><button class="icon" data-swap="${key}" title="Remplacer ce repas">↻</button></div>
+        <div class="tools"><button class="icon" data-lock="${key}" title="${lock?"Déverrouiller":"Verrouiller"}">${lock?`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/></svg>`}</button><button class="icon" data-swap="${key}" title="Remplacer ce repas"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13l-3-3M20 15H7l3 3"/></svg></button></div>
       </div>`;
     }
     totals.carbs+=dc;totals.prot+=dp;
-    h+=`<div class="day"><span class="d">${DAYS_LONG[d]}</span><span class="macro">${dc} g gluc. · ${dp} g prot.</span></div>${row}`;
+    const isToday=currentWeek===currentWeekKey()&&d===new Date().getDay();
+    h+=`<div class="day${isToday?" today":""}"><span class="d">${DAYS_LONG[d]}</span><span class="macro">${dc} g gluc. · ${dp} g prot.</span></div>${row}`;
   }
   g.classList.toggle("stagger",justShuffled);justShuffled=false;
   g.innerHTML=h;fillMinis(g);
@@ -537,8 +567,10 @@ async function swapSlot(key){
   const p=plans[currentWeek];if(!p||!p.slots[key])return;
   const cur=p.slots[key];const k=key.split("-")[1];
   const used=new Set(Object.values(p.slots).map(s=>s.id));
-  let pool=recipes.filter(r=>r.active!==false&&!used.has(r.id)&&(r.carbs??0)<=CARB_MAX);
-  if(cur.leftoverOf)pool=pool.filter(r=>(r.meals||1)===1&&(r.time_min||0)<=25);
+  const bf=k==="breakfast";
+  let pool=recipes.filter(r=>r.active!==false&&isBf(r)===bf&&(bf?r.id!==cur.id:!used.has(r.id))&&(r.carbs??0)<=CARB_MAX);
+  if(bf){}
+  else if(cur.leftoverOf)pool=pool.filter(r=>(r.meals||1)===1&&(r.time_min||0)<=25);
   else{const m=byId(cur.id)?.meals||1;pool=pool.filter(r=>(r.meals||1)===m&&(k==="dinner"||(r.time_min||0)<=25));}
   if(!pool.length)return toast("Aucune recette de remplacement compatible");
   const pick=rnd(pool);
@@ -547,28 +579,43 @@ async function swapSlot(key){
 }
 
 // ---------- courses
+const UNIT_BASE={"kg":["g",1000],"g":["g",1],"l":["ml",1000],"cl":["ml",10],"ml":["ml",1],"tete":["gousse",10],"tetes":["gousse",10],"gousse":["gousse",1],"gousses":["gousse",1],"c a c":["c. à s.",1/3],"c a s":["c. à s.",1],"piece":["pièce",1],"pieces":["pièce",1],"":["pièce",1]};
+function unitBase(u){const k=norm(u).replace(/\s+/g," ");return UNIT_BASE[k]||[u||"pièce",1];}
+function ingKey(name){return norm(name).replace(/\b(frais|fraiche|fraiches|entier|entiere|moyen|moyenne)\b/g," ").split(/\s+/).filter(Boolean).map(w=>w.length>3?w.replace(/[sx]$/,""):w).join(" ");}
+function fmtAmount(q,u){
+  if(u==="g"&&q>=1000)return fmtQty(Math.round(q/100)/10)+" kg";
+  if(u==="ml"&&q>=1000)return fmtQty(Math.round(q/100)/10)+" l";
+  if(u==="c. à s."&&q<1)return fmtQty(Math.round(q*3*10)/10)+" c. à c.";
+  const r=Math.round(q*100)/100;
+  const pl={"pièce":"pièces","gousse":"gousses","tranche":"tranches","botte":"bottes","tête":"têtes","boîte":"boîtes"};
+  return fmtQty(r)+" "+(r>1&&pl[u]?pl[u]:u);
+}
 function shoppingList(p){
   const agg={};if(!p||!p.slots)return agg;
-  const cooked=new Set(Object.values(p.slots).filter(s=>!s.leftoverOf).map(s=>s.id));
-  cooked.forEach(id=>{const r=byId(id);if(!r)return;(r.ingredients||[]).forEach(i=>{const ray=RAYONS.includes(i.rayon)?i.rayon:"Autre";const k=ray+"|"+String(i.name).toLowerCase()+"|"+(i.unit||"");agg[k]=agg[k]||{rayon:ray,name:i.name,unit:i.unit||"",qty:0,from:[]};agg[k].qty+=Number(i.qty)||0;agg[k].from.push(r.name);});});
+  const cooked=Object.values(p.slots).filter(s=>s&&!s.leftoverOf).map(s=>s.id);
+  cooked.forEach(id=>{const r=byId(id);if(!r)return;(r.ingredients||[]).forEach(i=>{
+    const ray=RAYONS.includes(i.rayon)?i.rayon:"Autre";const [bu,f]=unitBase(i.unit);const k=ray+"|"+ingKey(i.name)+"|"+bu;
+    agg[k]=agg[k]||{rayon:ray,name:i.name,unit:bu,qty:0,from:[]};agg[k].qty+=(Number(i.qty)||0)*f;if(!agg[k].from.includes(r.name))agg[k].from.push(r.name);});});
   return agg;
 }
 function renderCourses(){
   const p=plans[currentWeek];$("#coursesTitle").innerHTML=`Courses <em>${esc(weekLabel(currentWeek).toLowerCase())}</em>`;
   const agg=shoppingList(p);const keys=Object.keys(agg);
   if(!keys.length){$("#courses").innerHTML=`<p class="hint">Aucune liste : tire d'abord une semaine.</p>`;return;}
-  const checked=(p.checked)||{};let h="";
+  const checked=(p.checked)||{};const nDone=keys.filter(k=>checked[k]).length;
+  let h=`<div class="courses-top"><div class="courses-count"><b>${nDone} / ${keys.length}</b> dans le panier</div><div class="progress"><i style="width:${Math.round(nDone/keys.length*100)}%"></i></div></div>`;
   for(const ray of RAYONS){
-    const items=keys.filter(k=>agg[k].rayon===ray).sort((a,b)=>agg[a].name.localeCompare(agg[b].name,"fr"));
+    const items=keys.filter(k=>agg[k].rayon===ray).sort((a,b)=>(!!checked[a]-!!checked[b])||agg[a].name.localeCompare(agg[b].name,"fr"));
     if(!items.length)continue;
-    h+=`<div class="rayon"><h3>${ray}</h3><ul>`+items.map(k=>{const it=agg[k];const q=Math.round(it.qty*100)/100;const id="c-"+k.replace(/[^a-z0-9]/gi,"_");return `<li class="${checked[k]?"done":""}"><input type="checkbox" id="${id}" data-check="${esc(k)}" ${checked[k]?"checked":""}><label for="${id}" title="${esc(it.from.join(", "))}">${esc(it.name)}</label><span class="q">${fmtQty(q)} ${esc(it.unit)}</span></li>`;}).join("")+`</ul></div>`;
+    const left=items.filter(k=>!checked[k]).length;
+    h+=`<div class="rayon"><h3>${ray}${left?"":" · fait"}</h3><ul>`+items.map(k=>{const it=agg[k];const id="c-"+k.replace(/[^a-z0-9]/gi,"_");return `<li class="${checked[k]?"done":""}"><label for="${id}" title="${esc(it.from.join(", "))}"><input type="checkbox" id="${id}" data-check="${esc(k)}" ${checked[k]?"checked":""}><span>${esc(it.name)}</span><span class="q">${esc(fmtAmount(it.qty,it.unit))}</span></label></li>`;}).join("")+`</ul></div>`;
   }
   $("#courses").innerHTML=h;
-  $("#courses").querySelectorAll("[data-check]").forEach(el=>el.onchange=()=>toggleCheck(el.dataset.check,el.checked));
+  $("#courses").querySelectorAll("[data-check]").forEach(el=>el.onchange=()=>{navigator.vibrate&&navigator.vibrate(8);toggleCheck(el.dataset.check,el.checked);});
 }
 let checkTimer=null;
 function toggleCheck(k,v){const p=plans[currentWeek];if(!p)return;p.checked=p.checked||{};if(v)p.checked[k]=true;else delete p.checked[k];renderCourses();clearTimeout(checkTimer);checkTimer=setTimeout(()=>savePlan(p),600);}
-function listText(){const agg=shoppingList(plans[currentWeek]);let out="Courses "+currentWeek+"\n";for(const ray of RAYONS){const items=Object.values(agg).filter(i=>i.rayon===ray);if(!items.length)continue;out+="\n"+ray+"\n";items.forEach(i=>out+="- "+i.name+" · "+fmtQty(Math.round(i.qty*100)/100)+" "+i.unit+"\n");}return out;}
+function listText(){const agg=shoppingList(plans[currentWeek]);let out="Courses "+currentWeek+"\n";for(const ray of RAYONS){const items=Object.values(agg).filter(i=>i.rayon===ray);if(!items.length)continue;out+="\n"+ray+"\n";items.forEach(i=>out+="- "+i.name+" · "+fmtAmount(i.qty,i.unit)+"\n");}return out;}
 
 // ---------- recettes
 function renderRecettes(){
@@ -577,10 +624,10 @@ function renderRecettes(){
   let list=recipes.filter(r=>inactive||r.active!==false);
   if(q)list=list.filter(r=>r.name.toLowerCase().includes(q)||(r.ingredients||[]).some(i=>String(i.name).toLowerCase().includes(q)));
   if(pr)list=list.filter(r=>r.protein===pr);
-  if(kind==="large")list=list.filter(r=>(r.meals||1)>=3);if(kind==="mid")list=list.filter(r=>r.meals===2);if(kind==="single")list=list.filter(r=>(r.meals||1)===1);if(kind==="lunch")list=list.filter(r=>(r.time_min||0)<=20&&(r.meals||1)===1);
+  if(kind==="large")list=list.filter(r=>(r.meals||1)>=3);if(kind==="mid")list=list.filter(r=>r.meals===2);if(kind==="single")list=list.filter(r=>(r.meals||1)===1);if(kind==="breakfast")list=list.filter(isBf);if(kind==="lunch")list=list.filter(r=>!isBf(r)&&(r.time_min||0)<=20&&(r.meals||1)===1);
   list.sort((a,b)=>a.name.localeCompare(b.name,"fr"));
   $("#rlist").innerHTML=list.map(r=>{const open=openRecipe===r.id;return `<div class="rcard ${r.active===false?"off":""}" id="rc-${r.id}">
-    <div class="head"><div class="mini" data-mini="${r.id}"></div><div style="min-width:0;flex:1"><div class="t"><span data-open="${r.id}" style="cursor:pointer">${esc(r.name)}</span><span><button class="icon" data-edit="${r.id}" title="Modifier">✎</button></span></div>
+    <div class="head"><div class="mini" data-mini="${r.id}"></div><div style="min-width:0;flex:1"><div class="t"><span data-open="${r.id}" style="cursor:pointer">${esc(r.name)}</span><span><button class="icon" data-edit="${r.id}" title="Modifier"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></button></span></div>
     ${r.tagline?`<div class="tl">${esc(r.tagline)}</div>`:""}</div></div>
     <div class="meta"><span>${PROTEIN_LABEL[r.protein]||esc(r.protein)}</span><span>${r.time_min} min</span><span>${r.meals||1} repas</span><span>${r.carbs} g gluc.</span><span>${r.prot} g prot.</span><span>${r.kcal} kcal</span></div>
     <div class="tags">${(r.tags||[]).map(t=>`<span class="pill">${esc(t)}</span>`).join("")}${r.active===false?`<span class="pill">désactivée</span>`:""}</div>
@@ -599,6 +646,7 @@ function openEditor(r){
     <label class="full">Tagline (trois mots, ex. Doré. Fondant. Épicé.)<input type="text" name="tagline" value="${esc(r?.tagline||"")}"></label>
     <label>Protéine<select name="protein">${Object.entries(PROTEIN_LABEL).map(([v,l])=>`<option value="${v}" ${r?.protein===v?"selected":""}>${l}</option>`).join("")}</select></label>
     <label>Temps (min)<input type="number" name="time_min" value="${r?.time_min??30}" min="5"></label>
+    <label>Type de repas<select name="meal_type"><option value="main" ${isBf(r)?"":"selected"}>Déjeuner / dîner</option><option value="breakfast" ${isBf(r)?"selected":""}>Petit-déj</option></select></label>
     <label>Repas pour 2 produits<select name="meals">${[1,2,3].map(n=>`<option ${(r?.meals||1)===n?"selected":""}>${n}</option>`).join("")}</select></label>
     <label>Glucides nets / portion (g)<input type="number" name="carbs" value="${r?.carbs??10}" min="0"></label>
     <label>Protéines / portion (g)<input type="number" name="prot" value="${r?.prot??35}" min="0"></label>
@@ -614,7 +662,7 @@ function openEditor(r){
     $("#btnDelete").onclick=async()=>{if($("#btnDelete").dataset.arm){await deleteRecipe(r.id);e.classList.add("hidden");}else{$("#btnDelete").dataset.arm="1";$("#btnDelete").textContent="Confirmer la suppression";}};}
   $("#editForm").onsubmit=async ev=>{ev.preventDefault();const f=new FormData(ev.target);
     const ingredients=String(f.get("ingredients")).split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const [name,qty,unit,rayon]=l.split("|").map(x=>(x||"").trim());return {name,qty:parseFloat(String(qty).replace(",","."))||0,unit:unit||"",rayon:RAYONS.includes(rayon)?rayon:"Autre"};});
-    const doc={id:r?r.id:("p"+Date.now().toString(36)),name:String(f.get("name")).trim(),tagline:String(f.get("tagline")||"").trim()||null,protein:f.get("protein"),time_min:+f.get("time_min")||0,meals:+f.get("meals")||1,carbs:+f.get("carbs")||0,prot:+f.get("prot")||0,kcal:+f.get("kcal")||0,
+    const doc={id:r?r.id:("p"+Date.now().toString(36)),name:String(f.get("name")).trim(),tagline:String(f.get("tagline")||"").trim()||null,meal_type:f.get("meal_type")||"main",protein:f.get("protein"),time_min:+f.get("time_min")||0,meals:+f.get("meals")||1,carbs:+f.get("carbs")||0,prot:+f.get("prot")||0,kcal:+f.get("kcal")||0,
       tags:String(f.get("tags")).split(",").map(t=>t.trim()).filter(Boolean),ingredients,steps:String(f.get("steps")).split("\n").map(s=>s.trim()).filter(Boolean),active:r?r.active!==false:true,source:r?.source||"perso"};
     await saveRecipe(doc);e.classList.add("hidden");};
   e.scrollIntoView({block:"start"});
@@ -623,7 +671,7 @@ async function saveRecipe(r){const {created_at,...body}=r;body.updated_at=new Da
 async function deleteRecipe(id){const {error}=await sb.from("recipes").delete().eq("id",id);if(error)toast("Refusé : "+error.message);else{toast("Recette supprimée");loadAll();}}
 
 // ---------- tabs
-function switchTab(t){tab=t;document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===t)));["today","semaine","courses","recettes"].forEach(v=>show("view-"+v,v===t));render();try{localStorage.setItem("lt-tab",t);}catch(e){}window.scrollTo(0,0);}
+function switchTab(t){const from=tab;tab=t;if(t==="semaine"&&from!=="semaine")currentWeek=currentWeekKey();document.querySelector(".ticker").classList.toggle("off",t!=="today");document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===t)));["today","semaine","courses","recettes"].forEach(v=>show("view-"+v,v===t));render();try{localStorage.setItem("lt-tab",t);}catch(e){}window.scrollTo(0,0);if(t==="semaine")requestAnimationFrame(()=>{const el=document.querySelector(".day.today");if(el)el.scrollIntoView({block:"start",behavior:"smooth"});});}
 function render(){if(!ready)return;if(tab==="today")renderToday();else if(tab==="semaine")renderWeek();else if(tab==="courses")renderCourses();else renderRecettes();}
 document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 $("#prevWeek").onclick=()=>{currentWeek=shiftWeek(currentWeek,-1);render();};
@@ -638,6 +686,8 @@ $("#btnCopyList").onclick=async()=>{const t=listText();try{await navigator.clipb
 ["#fSearch","#fProtein","#fKind","#fInactive"].forEach(s=>$(s).addEventListener("input",renderRecettes));
 $("#btnNew").onclick=()=>openEditor(null);
 $("#btnLogout").onclick=async()=>{await sb.auth.signOut();location.reload();};
+$("#btnMenu").onclick=e=>{e.stopPropagation();const m=$("#menu"),on=m.classList.toggle("hidden");$("#btnMenu").setAttribute("aria-expanded",String(!on));};
+document.addEventListener("click",e=>{if(!e.target.closest(".acct"))$("#menu").classList.add("hidden");});
 
 // ---------- auth
 $("#loginForm").onsubmit=async e=>{e.preventDefault();const email=$("#loginEmail").value.trim();
@@ -646,7 +696,7 @@ $("#loginForm").onsubmit=async e=>{e.preventDefault();const email=$("#loginEmail
 let booted=false;
 function onSession(s){
   session=s;
-  show("view-login",!s);show("tabs",!!s);$("#btnLogout").classList.toggle("hidden",!s);
+  show("view-login",!s);show("tabs",!!s);$("#btnMenu").classList.toggle("hidden",!s);
   if(!s){["today","semaine","courses","recettes"].forEach(v=>show("view-"+v,false));booted=false;return;}
   $("#who").textContent=s.user.email;
   if(booted)return;booted=true;showLoader();
